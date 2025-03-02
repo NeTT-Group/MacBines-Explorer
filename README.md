@@ -6,4 +6,4 @@ MacBines explorer is the official web browser for all things MacBines. Enjoy all
 
 ## Copyright
 
-©2025 NeTT Group. All rights reserved.
+©2025 NeTT Systems. All rights reserved.
