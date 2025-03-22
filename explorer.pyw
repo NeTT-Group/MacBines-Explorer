@@ -10,7 +10,7 @@ from io import BytesIO
 class BrowserTab(QWebEngineView):
     def __init__(self):
         super().__init__()
-        self.setUrl(QUrl("https://www.start.macbines.com/macbines"))
+        self.setUrl(QUrl("https://www.macbines.com/macbines"))
 
 class MacBinesExplorer(QMainWindow):
     def __init__(self):
@@ -28,7 +28,7 @@ class MacBinesExplorer(QMainWindow):
         self.toolbar.setMovable(False)
         self.addToolBar(self.toolbar)
 
-        # Navigation Buttons with Icons from 2012
+        # Navigation Buttons
         self.add_nav_button("Home", "https://upload.wikimedia.org/wikipedia/commons/6/64/Home_icon_2012.png", self.navigate_home)
         self.add_nav_button("Refresh", "https://upload.wikimedia.org/wikipedia/commons/3/3a/Refresh_icon_2012.png", self.refresh_page)
         self.add_nav_button("Back", "https://upload.wikimedia.org/wikipedia/commons/9/90/Back_icon_2012.png", self.navigate_back)
@@ -57,7 +57,7 @@ class MacBinesExplorer(QMainWindow):
         main_layout.addWidget(self.tabs)
         
         # Add first tab
-        self.add_new_tab(QUrl("https://www.start.macbines.com/macbines"), "New Tab")
+        self.add_new_tab(QUrl("https://www.macbines.com/macbines"), "New Tab")
 
     def add_nav_button(self, text, icon_url, function):
         button = QPushButton()
@@ -85,7 +85,7 @@ class MacBinesExplorer(QMainWindow):
         browser.urlChanged.connect(lambda url, br=browser: self.update_tab_title(url, br))
 
     def new_tab(self):
-        self.add_new_tab(QUrl("https://www.start.macbines.com/macbines"), "New Tab")
+        self.add_new_tab(QUrl("https://www.newtab.macbines.com/newtab"), "New Tab")
 
     def close_tab(self, index):
         if self.tabs.count() > 1:
@@ -96,7 +96,7 @@ class MacBinesExplorer(QMainWindow):
         self.tabs.setTabText(index, url.host() or "New Tab")
 
     def navigate_home(self):
-        self.current_browser().setUrl(QUrl("https://www.start.macbines.com/macbines"))
+        self.current_browser().setUrl(QUrl("https://www.macbines.com/macbines"))
 
     def refresh_page(self):
         self.current_browser().reload()
