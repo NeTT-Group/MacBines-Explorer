@@ -1,11 +1,10 @@
 import sys
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QVBoxLayout, QWidget,
-                             QToolBar, QPushButton, QLineEdit, QLabel, QTabWidget)
+                             QToolBar, QPushButton, QLineEdit, QLabel, QTabWidget, QStatusBar)
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 from PyQt5.QtCore import QUrl
 from PyQt5.QtGui import QIcon, QPixmap
 from urllib.request import urlopen
-from io import BytesIO
 
 class BrowserTab(QWebEngineView):
     def __init__(self):
@@ -40,8 +39,6 @@ class MacBinesExplorer(QMainWindow):
         self.add_nav_button("Amazon", "https://i.pinimg.com/originals/01/ca/da/01cada77a0a7d326d85b7969fe26a728.jpg", self.navigate_amazon)
         self.add_nav_button("Facebook", "https://static.wikia.nocookie.net/logopedia/images/0/0f/Facebook_%282005-2012%29.svg/revision/latest/scale-to-width-down/1000?cb=20161012152350", self.navigate_facebook)
         self.add_nav_button("Twitter", "https://upload.wikimedia.org/wikipedia/sco/9/9f/Twitter_bird_logo_2012.svg", self.navigate_twitter)
-
-        # New Tab Button
         self.add_nav_button("New Tab", "https://upload.wikimedia.org/wikipedia/commons/6/64/Home_icon_2012.png", self.new_tab)
 
         # URL Bar
@@ -55,7 +52,11 @@ class MacBinesExplorer(QMainWindow):
         self.tabs.tabCloseRequested.connect(self.close_tab)
         self.tabs.currentChanged.connect(self.update_url_bar)
         main_layout.addWidget(self.tabs)
-        
+
+        # Status Bar
+        self.status = QStatusBar()
+        self.setStatusBar(self.status)
+
         # Add first tab
         self.add_new_tab(QUrl("https://www.macbines.com/macbines"), "New Tab")
 
@@ -63,7 +64,7 @@ class MacBinesExplorer(QMainWindow):
         button = QPushButton()
         button.setIcon(self.load_icon_from_url(icon_url))
         button.setText(text)
-        button.setStyleSheet("background-color: #1a73e8; color: white; padding: 10px; border: none; display: flex; flex-direction: column; align-items: center;")
+        button.setStyleSheet("background-color: #1a73e8; color: white; padding: 10px; border: none;")
         button.setToolTip(text)
         button.clicked.connect(function)
         self.toolbar.addWidget(button)
@@ -82,7 +83,11 @@ class MacBinesExplorer(QMainWindow):
         browser.setUrl(qurl)
         index = self.tabs.addTab(browser, label)
         self.tabs.setCurrentIndex(index)
+
+        # Update tab title and favicon
         browser.urlChanged.connect(lambda url, br=browser: self.update_tab_title(url, br))
+        browser.iconChanged.connect(lambda icon, i=index: self.tabs.setTabIcon(i, icon))
+        browser.urlChanged.connect(lambda url: self.status.showMessage(url.toString()))
 
     def new_tab(self):
         self.add_new_tab(QUrl("https://www.newtab.macbines.com/newtab"), "New Tab")
@@ -109,16 +114,16 @@ class MacBinesExplorer(QMainWindow):
 
     def navigate_bing(self):
         self.current_browser().setUrl(QUrl("https://www.bing.com"))
-    
+
     def navigate_msn(self):
         self.current_browser().setUrl(QUrl("https://www.msn.com"))
-    
+
     def navigate_amazon(self):
         self.current_browser().setUrl(QUrl("https://www.amazon.com"))
-    
+
     def navigate_facebook(self):
         self.current_browser().setUrl(QUrl("https://www.facebook.com"))
-    
+
     def navigate_twitter(self):
         self.current_browser().setUrl(QUrl("https://www.twitter.com"))
 
@@ -133,13 +138,14 @@ class MacBinesExplorer(QMainWindow):
     def navigate_url(self):
         url = self.url_bar.text()
         if not url.startswith("http://") and not url.startswith("https://"):
-            url = "http://" + url
+            url = "https://" + url
         self.current_browser().setUrl(QUrl(url))
 
     def update_url_bar(self, index):
         if index >= 0:
             url = self.current_browser().url().toString()
             self.url_bar.setText(url)
+            self.status.showMessage(url)
 
     def current_browser(self):
         return self.tabs.currentWidget()
